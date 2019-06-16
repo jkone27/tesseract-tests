@@ -74,7 +74,7 @@ let ``Route /health returns "alive"`` () =
     |> shouldContain "alive"
 
 [<Fact>]
-let ``Route /ocr returns text content from an image`` () =
+let ``Post to /ocr returns text content from a png image (multipart form upload)`` () =
     use server = new TestServer(createHost())
     use client = server.CreateClient()
 

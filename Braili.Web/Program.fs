@@ -1,13 +1,7 @@
 namespace Braili.Web
 
-open System
-open System.Collections.Generic
-open System.IO
-open System.Linq
-open System.Threading.Tasks
 open Microsoft.AspNetCore
 open Microsoft.AspNetCore.Hosting
-open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 
 module Program =
@@ -16,10 +10,20 @@ module Program =
     let CreateWebHostBuilder args =
         WebHost
             .CreateDefaultBuilder(args)
-            .UseStartup<Startup>();            
+            .UseStartup<Startup>()
+
+    let configureLogging (builder : ILoggingBuilder) =
+        builder
+            //.AddFilter(filter) // Optional filter
+            .AddConsole()      // Set up the Console logger
+            .AddDebug()        // Set up the Debug logger
+        |> ignore
 
     [<EntryPoint>]
     let main args =
-        CreateWebHostBuilder(args).Build().Run()
+        CreateWebHostBuilder(args)
+            .ConfigureLogging(configureLogging)
+            .Build()
+            .Run()
 
         exitCode
