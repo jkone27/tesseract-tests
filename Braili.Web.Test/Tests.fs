@@ -35,6 +35,10 @@ let httpGet (path : string) (client : HttpClient) =
     |> client.GetAsync
     |> runTask
 
+let httpPost (path : string) (content: HttpContent) (client : HttpClient)  =
+    client.PostAsync(path,content)
+    |> runTask
+
 let isStatus (code : HttpStatusCode) (response : HttpResponseMessage) =
     Assert.Equal(code, response.StatusCode)
     response
@@ -74,11 +78,15 @@ let ``Route /ocr returns text content from an image`` () =
     use server = new TestServer(createHost())
     use client = server.CreateClient()
 
+    let headerPart = sprintf "Upload----%A" DateTime.UtcNow
+    use content = new MultipartFormDataContent(headerPart)
+    use fileStream = File.Open("helloworld.png", FileMode.Open)
+    content.Add(new StreamContent(fileStream), "test-picture", "upload.png")
     client
-    |> httpGet "/hello/fooBar"
+    |> httpPost "/ocr" content
     |> ensureSuccess
     |> readText
-    |> shouldContain "Hello fooBar, from Giraffe!"
+    |> shouldContain "hello world!"
 
 [<Fact>]
 let ``Route which doesn't exist returns 404 Page not found`` () =
