@@ -16,16 +16,16 @@ type Startup() =
         choose [
             GET >=>
                 choose [
-                    route "/health" >=> text "braili is alive"
+                    route "/health" >=> text "alive"
                 ]
             POST >=>
                 choose [
-                    route "/ocr" >=> handleOcrRequest
+                    route "/ocr" >=> (handleFormRequest readTextFromFormFileImage)
                 ]
             setStatusCode 404 >=> text "Not Found" ]
 
     member this.ConfigureServices(services: IServiceCollection) =
         services.AddGiraffe() |> ignore
 
-    member this.Configure(app: IApplicationBuilder, env: IHostingEnvironment) =
+    member this.Configure(app: IApplicationBuilder) =
         app.UseGiraffe webApp
