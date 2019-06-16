@@ -5,17 +5,27 @@ open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection
+open Giraffe
+open HttpHandler
+
+//https://github.com/giraffe-fsharp/Giraffe
 
 type Startup() =
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+    let webApp =
+        choose [
+            GET >=>
+                choose [
+                    route "/health" >=> text "braili is alive"
+                ]
+            POST >=>
+                choose [
+                    route "/ocr" >=> handleOcrRequest
+                ]
+            setStatusCode 404 >=> text "Not Found" ]
+
     member this.ConfigureServices(services: IServiceCollection) =
-        ()
+        services.AddGiraffe() |> ignore
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member this.Configure(app: IApplicationBuilder, env: IHostingEnvironment) =
-        if env.IsDevelopment() then 
-            app.UseDeveloperExceptionPage() |> ignore
-
-        app.Run(fun context -> context.Response.WriteAsync("Hello World!")) |> ignore
+        app.UseGiraffe webApp
