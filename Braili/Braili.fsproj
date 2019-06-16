@@ -6,9 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Ocr.fs" />
     <None Include="App.config" />
-    <None Include="tessdata\nld.traineddata" />
-    <None Include="tessdata\eng.traineddata" />
+    <None Include="tessdata\nld.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="tesseract-test.PNG" />
     <Compile Include="Program.fs" />
   </ItemGroup>
